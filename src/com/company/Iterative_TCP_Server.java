@@ -6,7 +6,12 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class Iterative_TCP_Server extends Thread{
+/* Iterative version of TCP Server, after accepting connection server will listen for clients messaged.
+   After client disconnects server will ask if it should wait for next client.
+   Only 1 client at a time may be connected to server.
+ */
+
+public class Iterative_TCP_Server {
     ServerSocket myServer = null;
     Socket myClient = null;
     int port;
@@ -66,6 +71,7 @@ public class Iterative_TCP_Server extends Thread{
                                 System.out.println("Disconnecting " + this.myClient.getInetAddress().getHostName());
                                 myClient.close();
                                 myClient = null;
+                                flag = true;
                                 break;
                             }
 
@@ -74,6 +80,8 @@ public class Iterative_TCP_Server extends Thread{
                         }
                     }
                 } catch(Exception e) {
+                    myClient = null;
+                    flag = true;
                     System.out.println(e.getMessage());
                     String nextClient;
                     Scanner myScanner = new Scanner(System.in);
@@ -88,9 +96,13 @@ public class Iterative_TCP_Server extends Thread{
                 Scanner myScanner = new Scanner(System.in);
                 System.out.println("Wait for next client? Y/N");
                 nextClient = myScanner.nextLine();
+                flag = true;
                 if(!(nextClient.equalsIgnoreCase("y"))){
                     break;
+                } else {
+                    System.out.println("waiting for connection...");
                 }
+
             }
 
             serverStop();
